@@ -11,7 +11,7 @@ object QueryParams {
 
   private implicit val currencyQueryParam: QueryParamDecoder[Either[UnsupportedCurrencyError, Currency]] =
     QueryParamDecoder[String].map { str =>
-      Try(Currency.fromString(str)).toEither.left.map(_ => UnsupportedCurrencyError(s"Invalid currency: $str"))
+      Try(Currency.withName(str)).toEither.left.map(_ => UnsupportedCurrencyError(s"Invalid currency: $str"))
     }
 
   object FromQueryParam extends QueryParamDecoderMatcher[Either[UnsupportedCurrencyError, Currency]]("from")
