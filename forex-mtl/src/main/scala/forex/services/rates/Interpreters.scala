@@ -1,8 +1,11 @@
 package forex.services.rates
 
-import cats.Applicative
-import interpreters._
+import cats.effect.{Async, Resource}
+import forex.services.rates.client.OneFrameClient
+import forex.services.rates.interpreters._
 
 object Interpreters {
-  def dummy[F[_]: Applicative]: Algebra[F] = new OneFrameDummy[F]()
+
+  def live[F[_]: Async](client: => Resource[F, OneFrameClient[F]]): Algebra[F] =
+    new LiveOneFrame[F](client)
 }
