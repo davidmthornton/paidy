@@ -58,7 +58,7 @@ support currencies. Locally, OneFrame runs on port 8080.
 
 #### Example OneFrame response
 
-```json
+```
 [
   {
     "from":"GBP",
@@ -77,6 +77,7 @@ support currencies. Locally, OneFrame runs on port 8080.
     "time_stamp":"2023-12-11T03:01:57.514Z"
   },
   ... (all other requested rates)
+  }
 ]
 ```
 

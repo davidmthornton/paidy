@@ -27,7 +27,7 @@ class RatesClientSpec extends AnyWordSpec with Matchers with Http4sDsl[IO] {
       IO(Response[IO](respStatus).withEntity(respJson).withHeaders(Header.Raw(CIString("Content-Type"), "application/json")))
   })
 
-  val oneFrameConfig: OneFrameConfig = OneFrameConfig(40.seconds, HttpConfig("localhost", 8080, 40.seconds), "dummy-token")
+  val oneFrameConfig: OneFrameConfig = OneFrameConfig(40.seconds, HttpConfig("http", "localhost", 8080, 40.seconds), "dummy-token")
 
   "OneFrameClient" should {
     "return a list of rates when the HTTP request to OneFrame is successful" in {

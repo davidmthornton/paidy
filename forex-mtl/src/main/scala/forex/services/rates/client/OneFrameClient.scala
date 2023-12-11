@@ -18,7 +18,7 @@ class OneFrameClient[F[_] : Sync](client: Client[F], oneFrameConfig: OneFrameCon
   override def getRatesFromApi: F[OneFrameLookupFailed Either List[Rate]] = {
 
     val allCurrencyPairsQueryString: String = allPairs.map(pair => "pair=" + pair.from + pair.to).mkString("&")
-    val getRateUrl = s"http://${oneFrameConfig.http.host}:${oneFrameConfig.http.port}/rates?$allCurrencyPairsQueryString"
+    val getRateUrl = s"${oneFrameConfig.http.protocol}://${oneFrameConfig.http.host}:${oneFrameConfig.http.port}/rates?$allCurrencyPairsQueryString"
 
     Uri
       .fromString(getRateUrl)

@@ -12,6 +12,4 @@ object Rate {
       to: Currency
   )
 
-  val pairs: Seq[Pair] = Currency.values.flatMap(c => Currency.values.filter(_ != c).map(z => Pair(c, z)))
-
 }

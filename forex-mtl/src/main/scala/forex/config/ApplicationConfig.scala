@@ -8,6 +8,7 @@ case class ApplicationConfig(
 )
 
 case class HttpConfig(
+    protocol: String,
     host: String,
     port: Int,
     timeout: FiniteDuration

@@ -26,7 +26,6 @@ class RatesHttpRoutesSpec extends AnyWordSpec with Matchers {
         response.status shouldEqual Status.BadRequest
         response.as[Json].unsafeRunSync() shouldEqual expectedInvalidResponse
       }
-
       "both provided currencies are the same" in {
         val invalidRequest: Request[IO] = Request[IO](Method.GET, uri"/rates?from=GBP&to=GBP")
         val expectedInvalidResponse: Json = Json.obj("error" -> Json.fromString("Cannot convert to and from the same currency. Invalid conversion requested: GBP to GBP"))

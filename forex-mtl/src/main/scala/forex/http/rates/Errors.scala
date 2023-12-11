@@ -10,6 +10,7 @@ object Errors {
 
   implicit val unsupportedCurrencyErrorEncoder: Encoder[UnsupportedCurrencyError] =
     deriveConfiguredEncoder[UnsupportedCurrencyError]
+
   implicit val invalidSuppliedCurrencyErrorEncoder: Encoder[InvalidSuppliedCurrencyError] =
     deriveConfiguredEncoder[InvalidSuppliedCurrencyError]
 
