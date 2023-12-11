@@ -1,54 +1,41 @@
 package forex.services.rates.client
 
-
-import cats.effect.BracketThrow
+import cats.effect.Sync
 import cats.implicits._
 import forex.config.OneFrameConfig
+import forex.domain.Currency.allPairs
 import forex.domain.Rate
-import forex.http.rates.Protocol.OneFrameApiResponse
+import forex.services.rates.Algebra
 import forex.services.rates.Errors.Error.OneFrameLookupFailed
-import org.http4s._
-import org.http4s.circe._
+import forex.services.rates.Protocol.OneFrameRate
 import org.http4s.client._
-import org.http4s.client.dsl.Http4sClientDsl
 import org.http4s.headers.Accept
+import org.http4s.{Header, MediaType, Method, Request, Uri}
 import org.typelevel.ci.CIString
 
-trait OneFrameClient[F[_]] {
-  def getRate(pair: Rate.Pair): F[List[OneFrameApiResponse]]
-}
+class OneFrameClient[F[_] : Sync](client: Client[F], oneFrameConfig: OneFrameConfig) extends Algebra[F] {
 
-object OneFrameClient {
+  override def getRatesFromApi: F[OneFrameLookupFailed Either List[Rate]] = {
 
-  def make[F[_] : BracketThrow : JsonDecoder](
-                                               client: Client[F],
-                                               oneFrameConfig: OneFrameConfig,
-                                             ): OneFrameClient[F] = new OneFrameClient[F] with Http4sClientDsl[F] {
+    val allCurrencyPairsQueryString: String = allPairs.map(pair => "pair=" + pair.from + pair.to).mkString("&")
+    val getRateUrl = s"http://${oneFrameConfig.http.host}:${oneFrameConfig.http.port}/rates?$allCurrencyPairsQueryString"
 
-    val getRateUrl = s"http://${oneFrameConfig.http.host}:${oneFrameConfig.http.port}/rates"
+    Uri
+      .fromString(getRateUrl)
+      .liftTo[F]
+      .flatMap { u =>
+        val request = Request[F](Method.GET, u)
+          .withHeaders(Header.Raw(CIString("token"), oneFrameConfig.token), Accept(MediaType.application.json))
 
-    def getRate(pair: Rate.Pair): F[List[OneFrameApiResponse]] = {
-
-      val currencyPair = Map("pair" -> s"${pair.from}${pair.to}")
-
-      Uri
-        .fromString(getRateUrl)
-        .liftTo[F]
-        .flatMap { uri =>
-          val request = Request[F](Method.GET)
-            .withUri(uri.withQueryParams(currencyPair))
-            .withHeaders(Header.Raw(CIString("token"), oneFrameConfig.token), Accept(MediaType.application.json))
-
-          client.run(request).use { resp =>
-            resp.status match {
-              case Status.Ok =>
-                resp.asJsonDecode[List[OneFrameApiResponse]]
-              case status =>
-                val msg = Option(status.reason).getOrElse("Unknown error during call to OneFrame service")
-                OneFrameLookupFailed(msg).raiseError[F, List[OneFrameApiResponse]]
-            }
+        client.expect[List[OneFrameRate]](request).attempt
+          .map {
+            case Right(rate) =>
+              Right(rate.map(_.toDomainRate))
+            case Left(error) =>
+              Left(OneFrameLookupFailed(error.getMessage))
           }
-        }
-    }
+      }
   }
+
+
 }

@@ -16,4 +16,11 @@ object Currency extends Enum[Currency] {
   case object USD extends Currency
 
   override val values: IndexedSeq[Currency] = findValues
+
+  val allPairs: List[Rate.Pair] =
+    (for {
+      from <- values
+      to <- values if (to != from)
+      pair = Rate.Pair(from, to)
+    } yield pair).toList
 }

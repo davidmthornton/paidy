@@ -1,10 +1,10 @@
-package forex.services.rates.client.http.rates
+package forex.http.rates
 
 import cats.effect.IO
 import forex.http.jsonDecoder
 import forex.http.rates.RatesHttpRoutes
 import forex.programs.RatesProgram
-import forex.services.rates.client.http.rates.mocks.Mocks.MockRatesProgram
+import forex.http.rates.mocks.Mocks.MockRatesProgram
 import io.circe.Json
 import org.http4s.implicits.http4sLiteralsSyntax
 import org.http4s.{Method, Request, Response, Status}

@@ -15,6 +15,7 @@ object Dependencies {
     val scalaCheck     = "1.15.3"
     val scalaTest      = "3.2.7"
     val catsScalaCheck = "0.3.2"
+    val catsSlf4J      = "1.5.1"
   }
 
   object Libraries {
@@ -41,6 +42,7 @@ object Dependencies {
 
     // Runtime
     lazy val logback = "ch.qos.logback" % "logback-classic" % Versions.logback
+    lazy val catsSlf4j = "org.typelevel" %% "log4cats-slf4j" % Versions.catsSlf4J
 
     // Test
     lazy val scalaTest      = "org.scalatest"     %% "scalatest"       % Versions.scalaTest

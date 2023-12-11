@@ -15,7 +15,6 @@ import org.http4s.server.Router
 class RatesHttpRoutes[F[_]: Sync](rates: RatesProgram[F]) extends Http4sDsl[F] {
 
   import Converters._
-  import Protocol._
   import QueryParams._
 
   private[http] val prefixPath = "/rates"

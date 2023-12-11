@@ -1,4 +1,4 @@
-package forex.services.rates.client.http.rates.mocks
+package forex.http.rates.mocks
 
 import cats.effect.IO
 import forex.domain.{Price, Rate, Timestamp}

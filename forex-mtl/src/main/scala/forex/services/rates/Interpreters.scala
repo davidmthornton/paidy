@@ -1,11 +1,12 @@
 package forex.services.rates
 
-import cats.effect.{Async, Resource}
+import cats.effect.Concurrent
+import forex.config.ApplicationConfig
 import forex.services.rates.client.OneFrameClient
-import forex.services.rates.interpreters._
+import org.http4s.client.Client
 
 object Interpreters {
 
-  def live[F[_]: Async](client: => Resource[F, OneFrameClient[F]]): Algebra[F] =
-    new LiveOneFrame[F](client)
+  def ratesClient[F[_] : Concurrent](oneFrameClient: Client[F], config: ApplicationConfig): Algebra[F] =
+    new OneFrameClient[F](oneFrameClient, config.oneFrameConfig)
 }

@@ -14,6 +14,7 @@ case class HttpConfig(
 )
 
 case class OneFrameConfig(
+    cacheFetchInterval: FiniteDuration,
     http: HttpConfig,
     token: String
 )
