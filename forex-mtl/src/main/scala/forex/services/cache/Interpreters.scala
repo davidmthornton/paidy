@@ -3,7 +3,6 @@ package forex.services.cache
 import cats.effect.{Concurrent, Timer}
 import forex.config.ApplicationConfig
 import forex.services.RatesClient
-import forex.services.cache.interpreters.RateCache
 import org.typelevel.log4cats.Logger
 
 object Interpreters {

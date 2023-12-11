@@ -1,4 +1,4 @@
-package forex.services.cache.interpreters
+package forex.services.cache
 
 import cats.Applicative
 import cats.effect.concurrent.Ref
@@ -7,7 +7,6 @@ import cats.implicits._
 import forex.config.OneFrameConfig
 import forex.domain._
 import forex.services.RatesClient
-import forex.services.cache.Algebra
 import forex.services.rates.Errors.Error
 import org.typelevel.log4cats.Logger
 
