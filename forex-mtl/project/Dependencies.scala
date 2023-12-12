@@ -37,8 +37,9 @@ object Dependencies {
     lazy val circeParser      = circe("circe-parser")
     lazy val pureConfig       = "com.github.pureconfig" %% "pureconfig" % Versions.pureConfig
     lazy val enumeratum       = "com.beachape" %% "enumeratum" % Versions.enumeratum
+
     // Compiler plugins
-    lazy val kindProjector = "org.typelevel" %% "kind-projector" % Versions.kindProjector cross CrossVersion.full
+    lazy val kindProjector    = "org.typelevel" %% "kind-projector" % Versions.kindProjector cross CrossVersion.full
 
     // Runtime
     lazy val logback = "ch.qos.logback" % "logback-classic" % Versions.logback

@@ -1,6 +1,6 @@
 package forex.services.rates.client
 
-import cats.effect.{IO, Timer}
+import cats.effect.IO
 import forex.config.{HttpConfig, OneFrameConfig}
 import forex.domain.{Currency, Price, Rate, Timestamp}
 import forex.services.rates.Errors.Error.OneFrameLookupFailed
@@ -18,7 +18,6 @@ import java.time.OffsetDateTime
 import scala.concurrent.duration.DurationInt
 
 class RatesClientSpec extends AnyWordSpec with Matchers with Http4sDsl[IO] {
-  implicit val timer: Timer[IO] = IO.timer(scala.concurrent.ExecutionContext.Implicits.global)
 
   object CurrencyQueryString extends QueryParamDecoderMatcher[String]("pair")
 

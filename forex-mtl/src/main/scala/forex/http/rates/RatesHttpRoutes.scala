@@ -2,15 +2,15 @@ package forex.http
 package rates
 
 import cats.effect.Sync
-import cats.implicits.{catsSyntaxApplicativeError, toFunctorOps}
-import cats.syntax.flatMap._
-import forex.domain.Currency
+import cats.implicits._
+import forex.domain.{Currency, Rate}
 import forex.http.rates.Errors._
 import forex.programs.RatesProgram
+import forex.programs.rates.Errors.{Error => ProgramError}
 import forex.programs.rates.{Protocol => RatesProgramProtocol}
-import org.http4s.HttpRoutes
 import org.http4s.dsl.Http4sDsl
 import org.http4s.server.Router
+import org.http4s.{HttpRoutes, Response}
 
 class RatesHttpRoutes[F[_]: Sync](rates: RatesProgram[F]) extends Http4sDsl[F] {
 
@@ -26,19 +26,20 @@ class RatesHttpRoutes[F[_]: Sync](rates: RatesProgram[F]) extends Http4sDsl[F] {
       (for {
         from <- F.fromEither(maybeFromCurrency)
         to <- F.fromEither(maybeToCurrency)
-        _ <- handleSameCurrency(from, to)
-      } yield (from, to))
-        .flatMap { case (from, to) =>
-          rates.get(RatesProgramProtocol.GetRatesRequest(from, to))
-        }
-        .flatMap {
-          case Right(rate) => Ok(rate.asGetApiResponse)
-          case Left(error) => BadRequest(UnsupportedCurrencyError(error.getMessage))
-        }
+        res <- handleSameCurrency(from, to) *> rates.get(RatesProgramProtocol.GetRatesRequest(from, to))
+        result <- handleRatesGetResponse(res)
+      } yield result)
         .recoverWith {
-          case InvalidSuppliedCurrencyError(error) => BadRequest(InvalidSuppliedCurrencyError(error))
-          case UnsupportedCurrencyError(error) => BadRequest(UnsupportedCurrencyError(error))
+          case invalidCurr@InvalidSuppliedCurrencyError(_) => BadRequest(invalidCurr)
+          case unsuppCurr@UnsupportedCurrencyError(_) => BadRequest(unsuppCurr)
         }
+  }
+
+  private def handleRatesGetResponse(resp: ProgramError Either Rate): F[Response[F]] = {
+    resp match {
+      case Right(rate) => Ok(rate.asGetApiResponse)
+      case Left(error) => BadRequest(UnsupportedCurrencyError(error.getMessage))
+    }
   }
 
   private def handleSameCurrency(to: Currency, from: Currency): F[Unit] = {
